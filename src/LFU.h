@@ -64,12 +64,16 @@ void insereLFU(struct LFU*lfu, struct Page* page) {
 		page->next = NULL;
 		page->freq = 1;
 
+		//primeira pagina
 		if (lfu->head != NULL) {
+			/*se pagina nao existe no lfu,insiro na cabeça
+			 * sempre com freq=1, logo minha lfu sempre estará ordenada	*/
 			if (pageExiste == NULL) {
 				page->next = lfu->head;
 				lfu->head->prev = page;
 				lfu->head = page;
 			} else {
+				/*Se pagina já existe na lfu devo remove-la e inserir-la na head com freq=1*/
 
 				if (page == lfu->head) {
 					lfu->head->freq = 1;
@@ -86,15 +90,16 @@ void insereLFU(struct LFU*lfu, struct Page* page) {
 					while (x != NULL) {
 						if (x->next == page) {
 							x->next = page->next;
-							page->next;
-
-							page->next = page->prev = NULL;
+							page->next->prev=page->prev;
+							lfu->head->prev=x->next;
+							page->next=lfu->head;
+							page->prev = NULL;
+							lfu->head=lfu->head->prev;
 						}
 						x = x->next;
 					}
 				}
 			}
-
 		} else {
 			lfu->head = page;
 			lfu->tail = page;
@@ -104,18 +109,13 @@ void insereLFU(struct LFU*lfu, struct Page* page) {
 		page->lista = lfu;
 	}
 }
-struct Page * removeLRU(struct LRU * lru, struct Page* page) {
-	if (page != NULL) {
-		if (lfu->tail == lfu->head) {
-			lfu->tail = lfu->head = NULL;
-		} else if (page == lfu->tail) {
-			lfu->tail = page->prev;
-			lfu->tail->next = NULL;
+struct Page * removeLFU(struct LFU * lfu, struct Page* page) {
+	if(page!=NULL){
+		if(page==lfu->tail){
+			lfu->tail=page->prev;
+			lfu->tail->next=NULL;
+			page->prev=page->next=NULL;
 		}
-		lfu->size--;
-		page->lista = NULL;
-		page->next = NULL;
-		page->prev = NULL;
 	}
 	return page;
 }
