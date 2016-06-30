@@ -48,10 +48,9 @@ int insere(int id, char oper) {
 		page = criaPagina(id);
 
 		if (lfu->size == capacidade) {
-			struct Page* deletarPage;
-			removeLFU(lfu, deletarPage);
-			free(flush(deletarPage));
-			deletarPage = NULL;
+			removeLFU(lfu, page);
+			free(flush(page));
+			page = NULL;
 
 		}
 	}
@@ -73,5 +72,6 @@ void inicializa(int bytesT, int capacidadeT) {
 	lfu->head = NULL;
 	lfu->tail = NULL;
 	lfu->size = 0;
+
 }
 

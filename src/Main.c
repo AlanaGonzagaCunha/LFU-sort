@@ -18,13 +18,14 @@ int toInt(char *string){
     }
   return (res * p);
 }
-int Main(int argc, char *argv[]) {
 
-	printf("\n< %s >", argv[1]);
-	printf("\n< %s \n>", argv[2]);
+int main(int argc, char *argv[]) {
+
+	printf("\n< %s >",argv[1]);
+	printf("\n< %s \n>",argv[2]);
 	int capacity = toInt(argv[2]);
 
-	execute(argv[1],capacity);
+	execute(argv[1], capacity);
 	return 0;
 }
 

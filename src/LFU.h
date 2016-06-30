@@ -56,14 +56,12 @@ void aumentaFreq(struct LFU* lfu) {
 }
 
 void insereLFU(struct LFU*lfu, struct Page* page) {
-	struct Page* pageExiste = buscaSimples(lfu, page);
+	struct Page* pageExiste = buscaSimples(lfu, page->idPage);
 	struct Page* x = lfu->head;
 
 	if (page != NULL) {
 		page->prev = NULL;
 		page->next = NULL;
-		page->freq = 1;
-
 		//primeira pagina
 		if (lfu->head != NULL) {
 			/*se pagina nao existe no lfu,insiro na cabeça
@@ -81,20 +79,19 @@ void insereLFU(struct LFU*lfu, struct Page* page) {
 					lfu->tail = page->prev;
 					lfu->head->prev = lfu->tail->next;
 					page->next = lfu->head;
-					lfu->head = lfu->tail->next;
+					lfu->head = page;
 					lfu->tail->next = NULL;
 					page->prev = NULL;
-					page->freq = 1;
 				} else if (page != lfu->head && page != lfu->tail) {
 					//remover no meio da lista e inserir no inicio com freq=1
 					while (x != NULL) {
 						if (x->next == page) {
 							x->next = page->next;
-							page->next->prev=page->prev;
-							lfu->head->prev=x->next;
-							page->next=lfu->head;
+							page->next->prev = page->prev;
 							page->prev = NULL;
-							lfu->head=lfu->head->prev;
+							page->next = lfu->head;
+							lfu->head->prev = x->next;
+							lfu->head = page;
 						}
 						x = x->next;
 					}
@@ -103,20 +100,23 @@ void insereLFU(struct LFU*lfu, struct Page* page) {
 		} else {
 			lfu->head = page;
 			lfu->tail = page;
-			page->freq++;
 			lfu->size++;
 		}
+		page->freq = 1;
 		page->lista = lfu;
 	}
 }
 struct Page * removeLFU(struct LFU * lfu, struct Page* page) {
-	if(page!=NULL){
-		if(page==lfu->tail){
-			lfu->tail=page->prev;
-			lfu->tail->next=NULL;
-			page->prev=page->next=NULL;
+	if (page != NULL) {
+
+		if (page == lfu->tail) {
+			lfu->tail = page->prev;
+			lfu->tail->next = NULL;
 		}
+		lfu->size--;
+		page->lista = NULL;
+		page->next = NULL;
+		page->prev = NULL;
 	}
 	return page;
 }
-
