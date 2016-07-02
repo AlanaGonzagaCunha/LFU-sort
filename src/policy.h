@@ -1,4 +1,4 @@
-#include "LFU.h";
+#include "LFU.h"
 
 int miss = 0, hit = 0, capacidade = 5, estado;
 int writeCounter = 0, readCounter = 0;
@@ -51,7 +51,6 @@ int insere(int id, char oper) {
 			removeLFU(lfu, page);
 			free(flush(page));
 			page = NULL;
-
 		}
 	}
 	return estado;
@@ -72,6 +71,5 @@ void inicializa(int bytesT, int capacidadeT) {
 	lfu->head = NULL;
 	lfu->tail = NULL;
 	lfu->size = 0;
-
 }
 

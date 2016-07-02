@@ -18,16 +18,6 @@ struct Page {
 	struct LFU* lista;
 	char* content;
 };
-struct Page* buscaSimples(struct LFU* lfu, int id) {
-	struct Page* x = lfu->head;
-	while (x != NULL) {
-		if (x->idPage == id) {
-			return x;
-		}
-		x = x->next;
-	}
-	return NULL;
-}
 void startFILE() {
 
 	file = fopen("file.txt", "r+");
@@ -55,6 +45,16 @@ void aumentaFreq(struct LFU* lfu) {
 	}
 }
 
+struct Page* buscaSimples(struct LFU* lfu, int id) {
+	struct Page* x = lfu->head;
+	while (x != NULL) {
+		if (x->idPage == id) {
+			return x;
+		}
+		x = x->next;
+	}
+	return NULL;
+}
 void insereLFU(struct LFU*lfu, struct Page* page) {
 	struct Page* pageExiste = buscaSimples(lfu, page->idPage);
 	struct Page* x = lfu->head;
@@ -62,7 +62,6 @@ void insereLFU(struct LFU*lfu, struct Page* page) {
 	if (page != NULL) {
 		page->prev = NULL;
 		page->next = NULL;
-		//primeira pagina
 		if (lfu->head != NULL) {
 			/*se pagina nao existe no lfu,insiro na cabeça
 			 * sempre com freq=1, logo minha lfu sempre estará ordenada	*/
@@ -90,7 +89,7 @@ void insereLFU(struct LFU*lfu, struct Page* page) {
 							page->next->prev = page->prev;
 							page->prev = NULL;
 							page->next = lfu->head;
-							lfu->head->prev = x->next;
+							lfu->head->prev =page;
 							lfu->head = page;
 						}
 						x = x->next;
@@ -98,10 +97,11 @@ void insereLFU(struct LFU*lfu, struct Page* page) {
 				}
 			}
 		} else {
+			//primeira pagina
 			lfu->head = page;
 			lfu->tail = page;
-			lfu->size++;
 		}
+		lfu->size++;
 		page->freq = 1;
 		page->lista = lfu;
 	}
